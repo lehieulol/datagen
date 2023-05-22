@@ -1,14 +1,13 @@
 import copy
 import random
-import secrets
-import time
+import secrets # unseedable
 from math import sqrt, sin, cos, pi
 
-import matplotlib.pyplot as plt
 import numpy as np
 from ortools.linear_solver import pywraplp
 from shapely.geometry import Polygon, Point
 
+import parameter
 
 def FindPath(V, f, s, t, c, n):
     # Find Augmentation Path
@@ -67,7 +66,7 @@ def MaxFlow(s, t, c, n, V):
       max flow from s to t
     """
 
-    f = {i: {j: 0 for j in V} for i in V}  # flow
+    f = {i: {j: 0 for j in V} for i in V}  #flow
     stop = False
     while stop == False:
         if len(FindPath(V, f, s, t, c, n)) > 1:
@@ -241,19 +240,19 @@ def place_relay_nodes_between_sets(sSet1, sSet2, num, Rc,
 def place_relay_nodes_between_2_targets(i, j, n, Base, nodes_for_each_target, Rc, relay_nodes):
     # place relay sList_s between tList[i] and tList[j] (might include Base)
     if i != n and j != n:
-        s1 = secrets.choice(nodes_for_each_target[i])
-        s2 = secrets.choice(nodes_for_each_target[j])
+        s1 = random.choice(nodes_for_each_target[i])
+        s2 = random.choice(nodes_for_each_target[j])
         # relay_nodes.append(Relay(s1.x,s1.y))
         # relay_nodes.append(Relay(s2.x,s2.y))
         if distance(s1, s2) > Rc:
             place_relay_nodes_between_2_points(s1, s2, Rc, relay_nodes)
     elif i == n:
-        s1 = secrets.choice(nodes_for_each_target[j])
+        s1 = random.choice(nodes_for_each_target[j])
         # relay_nodes.append(Relay(s1.x,s1.y))
         if distance(s1, Base) > Rc:
             place_relay_nodes_between_2_points(s1, Base, Rc, relay_nodes)
     elif j == n:
-        s1 = secrets.choice(nodes_for_each_target[i])
+        s1 = random.choice(nodes_for_each_target[i])
         # relay_nodes.append(Relay(s1.x,s1.y))
         if distance(s1, Base) > Rc:
             place_relay_nodes_between_2_points(s1, Base, Rc, relay_nodes)
@@ -328,6 +327,9 @@ class Target:
 
 class Net:
     def __init__(self, targets, r, r_c, r_cl, q, Base):
+        np.random.seed(parameter.seed)
+        random.seed(parameter.seed)
+        parameter.seed += 1
         self.targets = targets
         self.n = len(targets)
         self.disk_set = []  # potential points
@@ -511,6 +513,9 @@ class Net:
                     check_result = check_q_connect(i, self.adjacency_list, self.q_ext)
                     if check_result[0]:
                         self.next_vertex[i] = random.sample(check_result[1], self.q_ext[i])
+                        self.next_vertex[i] = random.sample(check_result[1], self.q_ext[i])
+                        self.next_vertex[i] = random.sample(check_result[1], self.q_ext[i])
+                        self.next_vertex[i] = random.sample(check_result[1], self.q_ext[i])
                         break
             else:
                 self.next_vertex[i] = random.sample(check_result[1], self.q_ext[i])
@@ -543,7 +548,7 @@ class Net:
                     if next_vertex_mat[v][u] == 1:
                         node2 = get_unused_node(check_used_node[v], self.nodes_for_each_target, self.centers[v])
                     else:
-                        node2 = secrets.choice(self.nodes_for_each_target[self.centers[v]])
+                        node2 = random.choice(self.nodes_for_each_target[self.centers[v]])
                     if distance(node1, node2) > self.r_c:
                         place_relay_nodes_between_2_points(node1, node2, self.r_c, self.relay_nodes)
                     adj_mat[u][v] = 1

@@ -1,8 +1,7 @@
-import argparse
+import generator
+import parameter
 
-from generator import Generator
-
-
+'''
 def two_element_list(string):
     """
     Custom type for argparse that takes a comma-separated string and returns
@@ -36,8 +35,11 @@ args = parser.parse_args()
 # arg_dict = vars(args)
 # for key, value in arg_dict.items():
 #     print(key, value)
+'''
 
 if __name__ == '__main__':
-    generator = Generator(args.num_target, args.q_max, args.r_s, args.r_c, args.r_cl,
-                          args.area, args.rand_q, args.base)
-    generator.generate()
+    for num_target in parameter.num_target:
+        _generator = generator.Generator(num_target, parameter.q_max, parameter.r_s, parameter.r_c, parameter.r_cl,
+                              parameter.area, parameter.rand_q, parameter.base)
+
+        _generator.generate(f'.\\Output\\test_{num_target}.yaml')
